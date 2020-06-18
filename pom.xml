@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>quickStartJavaProjectName</groupId>
-    <artifactId>quickStartJavaProjectName</artifactId>
+
+    <groupId>com.example</groupId>
+    <artifactId>activityDemo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
+    <name>activityDemo</name>
+    <!-- FIXME change it to the project's website -->
+    <url>http://www.example.com</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <actVer>6.0.0</actVer>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.activiti</groupId>
             <artifactId>activiti-engine</artifactId>
-            <version> 6.0.0</version>
+            <version>${actVer}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -28,9 +42,7 @@
         </dependency>
     </dependencies>
     <build>
-
         <plugins>
-
             <!-- Maven Assembly Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -59,16 +71,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>6</source>
-                    <target>6</target>
-                </configuration>
-            </plugin>
-
         </plugins>
-
     </build>
 </project>

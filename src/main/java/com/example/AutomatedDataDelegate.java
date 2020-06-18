@@ -1,9 +1,9 @@
 package com.example;
 
+import java.util.Date;
+
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
-
-import java.util.Date;
 
 public class AutomatedDataDelegate implements JavaDelegate {
 

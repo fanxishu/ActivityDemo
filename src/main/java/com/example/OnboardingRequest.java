@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,11 +31,11 @@ import org.activiti.engine.task.Task;
 public class OnboardingRequest {
     public static void main(String[] args) throws ParseException {
         ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
-                .setJdbcUrl("jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000")
-                .setJdbcUsername("sa")
-                .setJdbcPassword("")
-                .setJdbcDriver("org.h2.Driver")
-                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
+            .setJdbcUrl("jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000")
+            .setJdbcUsername("sa")
+            .setJdbcPassword("")
+            .setJdbcDriver("org.h2.Driver")
+            .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
         ProcessEngine processEngine = cfg.buildProcessEngine();
         String pName = processEngine.getName();
         String ver = ProcessEngine.VERSION;
@@ -43,20 +43,20 @@ public class OnboardingRequest {
 
         RepositoryService repositoryService = processEngine.getRepositoryService();
         Deployment deployment = repositoryService.createDeployment()
-                .addClasspathResource("onboarding.bpmn20.xml").deploy();
+            .addClasspathResource("onboarding.bpmn20.xml").deploy();
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
-                .deploymentId(deployment.getId()).singleResult();
+            .deploymentId(deployment.getId()).singleResult();
         System.out.println(
-                "Found process definition ["
-                        + processDefinition.getName() + "] with id ["
-                        + processDefinition.getId() + "]");
+            "Found process definition ["
+                + processDefinition.getName() + "] with id ["
+                + processDefinition.getId() + "]");
 
         RuntimeService runtimeService = processEngine.getRuntimeService();
         ProcessInstance processInstance = runtimeService
-                .startProcessInstanceByKey("onboarding");
+            .startProcessInstanceByKey("onboarding");
         System.out.println("Onboarding process started with process instance id ["
-                + processInstance.getProcessInstanceId()
-                + "] key [" + processInstance.getProcessDefinitionKey() + "]");
+            + processInstance.getProcessInstanceId()
+            + "] key [" + processInstance.getProcessDefinitionKey() + "]");
 
         TaskService taskService = processEngine.getTaskService();
         FormService formService = processEngine.getFormService();
@@ -65,7 +65,7 @@ public class OnboardingRequest {
         Scanner scanner = new Scanner(System.in);
         while (processInstance != null && !processInstance.isEnded()) {
             List<Task> tasks = taskService.createTaskQuery()
-                    .taskCandidateGroup("managers").list();
+                .taskCandidateGroup("managers").list();
             System.out.println("Active outstanding tasks: [" + tasks.size() + "]");
             for (int i = 0; i < tasks.size(); i++) {
                 Task task = tasks.get(i);
@@ -94,39 +94,41 @@ public class OnboardingRequest {
 
                 HistoricActivityInstance endActivity = null;
                 List<HistoricActivityInstance> activities =
-                        historyService.createHistoricActivityInstanceQuery()
-                                .processInstanceId(processInstance.getId()).finished()
-                                .orderByHistoricActivityInstanceEndTime().asc()
-                                .list();
+                    historyService.createHistoricActivityInstanceQuery()
+                        .processInstanceId(processInstance.getId()).finished()
+                        .orderByHistoricActivityInstanceEndTime().asc()
+                        .list();
                 for (HistoricActivityInstance activity : activities) {
-                    if (activity.getActivityType() == "startEvent") {
+                    // 原始代码有错误 : if (activity.getActivityType() == "startEvent" ) {
+                    if (activity.getActivityType().equals("startEvent")) {
                         System.out.println("BEGIN " + processDefinition.getName()
-                                + " [" + processInstance.getProcessDefinitionKey()
-                                + "] " + activity.getStartTime());
+                            + " [" + processInstance.getProcessDefinitionKey()
+                            + "] " + activity.getStartTime());
                     }
-                    if (activity.getActivityType() == "endEvent") {
+                    // 原始代码有错误 : if (activity.getActivityType() == "endEvent" ) {
+                    if (activity.getActivityType().equals("endEvent")) {
                         // Handle edge case where end step happens so fast that the end step
                         // and previous step(s) are sorted the same. So, cache the end step
                         //and display it last to represent the logical sequence.
                         endActivity = activity;
                     } else {
                         System.out.println("-- " + activity.getActivityName()
-                                + " [" + activity.getActivityId() + "] "
-                                + activity.getDurationInMillis() + " ms");
+                            + " [" + activity.getActivityId() + "] "
+                            + activity.getDurationInMillis() + " ms");
                     }
                 }
                 if (endActivity != null) {
                     System.out.println("-- " + endActivity.getActivityName()
-                            + " [" + endActivity.getActivityId() + "] "
-                            + endActivity.getDurationInMillis() + " ms");
+                        + " [" + endActivity.getActivityId() + "] "
+                        + endActivity.getDurationInMillis() + " ms");
                     System.out.println("COMPLETE " + processDefinition.getName() + " ["
-                            + processInstance.getProcessDefinitionKey() + "] "
-                            + endActivity.getEndTime());
+                        + processInstance.getProcessDefinitionKey() + "] "
+                        + endActivity.getEndTime());
                 }
             }
             // Re-query the process instance, making sure the latest state is available
             processInstance = runtimeService.createProcessInstanceQuery()
-                    .processInstanceId(processInstance.getId()).singleResult();
+                .processInstanceId(processInstance.getId()).singleResult();
         }
         scanner.close();
     }
